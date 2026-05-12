@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { gerarCodigoPedido } from '../support/helpers';
-import { number } from 'zod';
+import { OrderLockupPage } from '../support/pages/OrderLockupPage';
 
 /// AAA - Arrange, Act, Assert
 test.describe('Consulta de Pedido', () => {
@@ -28,8 +28,8 @@ test.describe('Consulta de Pedido', () => {
     }
 
     // Act (Agir)
-    await page.getByRole('textbox', { name: 'Número do Pedido' }).fill(order.number);
-    await page.getByRole('button', { name: 'Buscar Pedido' }).click();
+    const orderLockupPage = new OrderLockupPage(page);
+    await orderLockupPage.searchOrder(order.number);
 
     // Assert (Verificar) 
     await expect(page.getByTestId(`order-result-${order.number}`)).toMatchAriaSnapshot(`
@@ -85,8 +85,8 @@ test.describe('Consulta de Pedido', () => {
     }
 
     // Act (Agir)
-    await page.getByRole('textbox', { name: 'Número do Pedido' }).fill(order.number);
-    await page.getByRole('button', { name: 'Buscar Pedido' }).click();
+    const orderLockupPage = new OrderLockupPage(page);
+    await orderLockupPage.searchOrder(order.number);
 
     // Assert (Verificar) 
     // Assert (Verificar) 
@@ -143,8 +143,8 @@ test.describe('Consulta de Pedido', () => {
     }
 
     // Act (Agir)
-    await page.getByRole('textbox', { name: 'Número do Pedido' }).fill(order.number);
-    await page.getByRole('button', { name: 'Buscar Pedido' }).click();
+    const orderLockupPage = new OrderLockupPage(page);
+    await orderLockupPage.searchOrder(order.number);
 
     // Assert (Verificar)     
     await expect(page.getByTestId(`order-result-${order.number}`)).toMatchAriaSnapshot(`
@@ -190,8 +190,8 @@ test.describe('Consulta de Pedido', () => {
     const order = gerarCodigoPedido();
 
     // Act (Agir)
-    await page.getByRole('textbox', { name: 'Número do Pedido' }).fill(order);
-    await page.getByRole('button', { name: 'Buscar Pedido' }).click();
+    const orderLockupPage = new OrderLockupPage(page);
+    await orderLockupPage.searchOrder(order);
 
     /*Playwright Snapshot*/
     await expect(page.locator('#root')).toMatchAriaSnapshot(`
