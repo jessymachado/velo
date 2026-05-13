@@ -1,16 +1,23 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+
 import { generateOrderCode } from '../support/helpers';
+
+import { Navbar } from '../support/components/Navbar';
+
+import { LandingPage } from '../support/pages/LandingPage';
 import { OrderDetails, OrderLockupPage } from '../support/pages/OrderLockupPage';
+
+
 
 /// AAA - Arrange, Act, Assert
 test.describe('Consulta de Pedido', () => {
+  let orderLockupPage: OrderLockupPage;
 
-  test.beforeEach(async ({ page }) => {
-    // Arrange (preparar)
-    await page.goto('http://localhost:5173/');
-    await expect(page.getByTestId('hero-section').getByRole('heading')).toContainText('Velô Sprint');
-    await page.getByRole('link', { name: 'Consultar Pedido' }).click();
-    await expect(page.getByRole('heading')).toContainText('Consultar Pedido');
+  test.beforeEach(async ({ page }) => {    
+    await new LandingPage(page).goto();        
+    await new Navbar(page).orderLockupLink();
+    orderLockupPage = new OrderLockupPage(page);
+    orderLockupPage.validatePageLoaded();
   });
 
   test('deve consultar um pedido aprovado', async ({ page }) => {
@@ -27,8 +34,7 @@ test.describe('Consulta de Pedido', () => {
       payment: 'À Vista'
     }
 
-    // Act (Agir)
-    const orderLockupPage = new OrderLockupPage(page);
+    // Act (Agir)    
     await orderLockupPage.searchOrder(order.number);
 
     // Assert (Verificar) 
@@ -52,8 +58,7 @@ test.describe('Consulta de Pedido', () => {
       payment: 'À Vista'
     }
 
-    // Act (Agir)
-    const orderLockupPage = new OrderLockupPage(page);
+    // Act (Agir)    
     await orderLockupPage.searchOrder(order.number);
 
     // Assert (Verificar)     
@@ -77,8 +82,7 @@ test.describe('Consulta de Pedido', () => {
       payment: 'À Vista'
     }
 
-    // Act (Agir)
-    const orderLockupPage = new OrderLockupPage(page);
+    // Act (Agir)    
     await orderLockupPage.searchOrder(order.number);
 
     // Assert (Verificar)     
@@ -92,8 +96,7 @@ test.describe('Consulta de Pedido', () => {
     //Test Data
     const order = generateOrderCode();
 
-    // Act (Agir)
-    const orderLockupPage = new OrderLockupPage(page);
+    // Act (Agir)    
     await orderLockupPage.searchOrder(order);
 
     // Assert (Verificar)   
@@ -104,8 +107,7 @@ test.describe('Consulta de Pedido', () => {
     //Test Data
     const orderCode = "ABC123-INVALIDO"
     
-    // Act (Agir)
-    const orderLockupPage = new OrderLockupPage(page);
+    // Act (Agir)    
     await orderLockupPage.searchOrder(orderCode);
 
     // Assert (Verificar)   
