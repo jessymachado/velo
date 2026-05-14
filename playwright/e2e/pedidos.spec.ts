@@ -1,27 +1,14 @@
-import { test } from '@playwright/test';
-
+import { test } from '../support/fixtures';
 import { generateOrderCode } from '../support/helpers';
-
-import { Navbar } from '../support/components/Navbar';
-
-import { LandingPage } from '../support/pages/LandingPage';
-import { OrderDetails, OrderLockupPage } from '../support/pages/OrderLockupPage';
-
-
+import type { OrderDetails } from '../support/actions/orderLockupActions';
 
 /// AAA - Arrange, Act, Assert
 test.describe('Consulta de Pedido', () => {
-  let orderLockupPage: OrderLockupPage;
-
-  test.beforeEach(async ({ page }) => {    
-    await new LandingPage(page).goto();        
-    await new Navbar(page).orderLockupLink();
-    orderLockupPage = new OrderLockupPage(page);
-    orderLockupPage.validatePageLoaded();
+  test.beforeEach(async ({ app }) => {
+    await app.orderLockup.open();
   });
 
-  test('deve consultar um pedido aprovado', async ({ page }) => {
-    //Test Data    
+  test('deve consultar um pedido aprovado', async ({ app }) => {
     const order: OrderDetails = {
       number: 'VLO-G9MK3C',
       status: 'APROVADO',
@@ -31,21 +18,15 @@ test.describe('Consulta de Pedido', () => {
         name: 'Jessica Machado',
         email: 'ccr.jeh@velo.dev',
       },
-      payment: 'À Vista'
-    }
+      payment: 'À Vista',
+    };
 
-    // Act (Agir)    
-    await orderLockupPage.searchOrder(order.number);
-
-    // Assert (Verificar) 
-    await orderLockupPage.validateOrderDetails(order);
-
-    // Validação do badge de status encapsulada no Page Object
-    await orderLockupPage.validateStatusBadge(order.status);
+    await app.orderLockup.searchOrder(order.number);
+    await app.orderLockup.validateOrderDetails(order);
+    await app.orderLockup.validateStatusBadge(order.status);
   });
 
-  test('deve consultar um pedido reprovado', async ({ page }) => {
-    //Test Data    
+  test('deve consultar um pedido reprovado', async ({ app }) => {
     const order: OrderDetails = {
       number: 'VLO-CGVR9X',
       status: 'REPROVADO',
@@ -55,21 +36,15 @@ test.describe('Consulta de Pedido', () => {
         name: 'Tamara Weis',
         email: 'tamara@velo.dev',
       },
-      payment: 'À Vista'
-    }
+      payment: 'À Vista',
+    };
 
-    // Act (Agir)    
-    await orderLockupPage.searchOrder(order.number);
-
-    // Assert (Verificar)     
-    await orderLockupPage.validateOrderDetails(order);
-
-    // Validação do badge de status encapsulada no Page Object
-    await orderLockupPage.validateStatusBadge(order.status);
+    await app.orderLockup.searchOrder(order.number);
+    await app.orderLockup.validateOrderDetails(order);
+    await app.orderLockup.validateStatusBadge(order.status);
   });
 
-  test('deve consultar um pedido em análise', async ({ page }) => {
-    //Test Data    
+  test('deve consultar um pedido em análise', async ({ app }) => {
     const order: OrderDetails = {
       number: 'VLO-OM1N55',
       status: 'EM_ANALISE',
@@ -79,38 +54,25 @@ test.describe('Consulta de Pedido', () => {
         name: 'Tatiane Machado',
         email: 'tati@velo.dev',
       },
-      payment: 'À Vista'
-    }
+      payment: 'À Vista',
+    };
 
-    // Act (Agir)    
-    await orderLockupPage.searchOrder(order.number);
-
-    // Assert (Verificar)     
-    await orderLockupPage.validateOrderDetails(order);
-
-    // Validação do badge de status encapsulada no Page Object
-    await orderLockupPage.validateStatusBadge(order.status);
+    await app.orderLockup.searchOrder(order.number);
+    await app.orderLockup.validateOrderDetails(order);
+    await app.orderLockup.validateStatusBadge(order.status);
   });
 
-  test('deve exibir mensagem quando o pedido não é encontrado', async ({ page }) => {
-    //Test Data
+  test('deve exibir mensagem quando o pedido não é encontrado', async ({ app }) => {
     const order = generateOrderCode();
 
-    // Act (Agir)    
-    await orderLockupPage.searchOrder(order);
-
-    // Assert (Verificar)   
-    await orderLockupPage.validateOrderNotFound();
+    await app.orderLockup.searchOrder(order);
+    await app.orderLockup.validateOrderNotFound();
   });
 
-  test('deve exibir mensagem quando o pedido está fora do padrão', async ({ page }) => {    
-    //Test Data
-    const orderCode = "ABC123-INVALIDO"
-    
-    // Act (Agir)    
-    await orderLockupPage.searchOrder(orderCode);
+  test('deve exibir mensagem quando o pedido está fora do padrão', async ({ app }) => {
+    const orderCode = 'ABC123-INVALIDO';
 
-    // Assert (Verificar)   
-    await orderLockupPage.validateOrderNotFound();
+    await app.orderLockup.searchOrder(orderCode);
+    await app.orderLockup.validateOrderNotFound();
   });
 });
